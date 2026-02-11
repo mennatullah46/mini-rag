@@ -1,5 +1,5 @@
-# mini-rag
-This is my mini rag project!
+# mini-RAG
+This is a minimal implementation of the RAG model for question answering.
 
 # Requirenments
 Python 3.11 or later
