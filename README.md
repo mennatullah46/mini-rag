@@ -5,14 +5,38 @@ This is my mini rag project!
 Python 3.11 or later
 
 ### Install python using miniconda
+
 1) Download miniconda from [here] (https://www.anaconda.com/download)
 
 2) Create a new environment using the follownig command:
+
 ```bash
 $ conda create -n mini-rag python=3.11
 ```
 3) Activate the environment using the following command:
+
 ```bash
 $ conda activate mini-rag 
 ```
 
+### (Optional) Setup your command line for better readability
+
+```bash
+$ export PS1="\[\033[01;32m\]\u@\h:\w\n\[\033[00m\]\$ "
+```
+
+## Installation
+
+### Install required packages
+
+```bash
+$ pip install -r requirements.txt 
+```
+
+### Setup the environment variables
+
+```bash
+$ cp .env.example .env
+```
+
+Set your environment variables in the `.env ` file. Like `OPENAI_API_KEY` value

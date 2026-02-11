@@ -1,0 +1,3 @@
+fastapi==0.128.7
+unicorn[standard]==2.1.4
+python-multipart==0.0.22
