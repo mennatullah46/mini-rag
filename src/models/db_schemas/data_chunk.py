@@ -11,6 +11,7 @@ class DataChunk(BaseModel):
     chunk_order: int = Field(..., gt=0)
     chunk_project_id: ObjectId
 
+
     model_config = {
         "arbitrary_types_allowed": True  # replaces Config class
     }
