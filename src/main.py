@@ -1,10 +1,11 @@
 from fastapi import FastAPI
-from routes import base, data
+from routes import base, data, nlp
 from motor.motor_asyncio import AsyncIOMotorClient
 from contextlib import asynccontextmanager
 from helpers.config import get_settings
 from stores.llm.LLMProviderFactory import LLMProviderFactory
 from stores.vectordb.VectorDBProviderFactory import VectorDBProviderFactory
+from stores.llm.templates.template_parser import TemplateParser
 
 
 
@@ -40,8 +41,17 @@ async def lifespan(app: FastAPI):
     app.mongo_conn.close()
     app.vectordb_client.disconnect()
 
+    # why this happens here
+    app.template_parser = TemplateParser(
+    language=settings.PRIMARY_LANG,
+    default_language=settings.DEFAULT_LANG,
+    )
+
+
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(base.base_router)
 app.include_router(data.data_router)
+app.include_router(nlp.nlp_router)
+
 

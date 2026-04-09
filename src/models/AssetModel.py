@@ -1,6 +1,6 @@
 from .BaseDataModel import BaseDataModel
 from .enums.DataBaseEnums import DataBaseEnums
-from .db_schemas import Asset
+from .db_schemes import Asset
 from bson import ObjectId
 
 
