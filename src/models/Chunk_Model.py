@@ -1,6 +1,6 @@
 from .BaseDataModel import BaseDataModel
 from .enums.DataBaseEnums import DataBaseEnums
-from .db_schemas import DataChunk
+from .db_schemes import DataChunk
 from bson.objectid import ObjectId
 from pymongo import InsertOne
 

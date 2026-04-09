@@ -9,7 +9,7 @@ from models.enums.AssetTypeEnum import AssetTypeEnum
 import logging
 from schemas.data import ProcessRequest
 from models.ProjectModel import ProjectModel
-from models.db_schemas import DataChunk, Asset
+from models.db_schemes import DataChunk, Asset
 from models.Chunk_Model import ChunkModel
 from models.AssetModel import AssetModel
 
