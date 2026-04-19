@@ -94,3 +94,149 @@ class CoHereProvider(LLMInterface):
             "role": role,
             "text": self.process_text(prompt)
         }
+    
+
+# from ..LLMInterface import LLMInterface
+# from ..LLMEnums import CoHereEnums, DocumentTypeEnum
+# import cohere
+# import logging
+# import time
+# import random
+
+
+# class CoHereProvider(LLMInterface):
+
+#     def __init__(self, api_key: str,
+#                  default_input_max_characters: int = 1000,
+#                  default_generation_max_output_tokens: int = 1000,
+#                  default_generation_temperature: float = 0.1):
+
+#         self.api_key = api_key
+
+#         self.default_input_max_characters = default_input_max_characters
+#         self.default_generation_max_output_tokens = default_generation_max_output_tokens
+#         self.default_generation_temperature = default_generation_temperature
+
+#         self.generation_model_id = None
+#         self.embedding_model_id = None
+#         self.embedding_size = None
+
+#         self.client = cohere.Client(api_key=self.api_key)
+
+#         self.logger = logging.getLogger(__name__)
+
+#     # ----------------------------
+#     #  TRANSIENT ERROR CHECK
+#     # ----------------------------
+#     def is_transient_error(self, error: Exception) -> bool:
+#         error_type = type(error).__name__
+
+#         transient_errors = [
+#             "TooManyRequestsError",   # 429
+#             "ServiceUnavailableError",
+#             "GatewayTimeoutError",
+#             "TimeoutError",
+#             "ConnectionError"
+#         ]
+
+#         return error_type in transient_errors
+
+#     # ----------------------------
+#     #  RETRY CORE
+#     # ----------------------------
+#     def retry(self, func, retries=3, base_delay=1):
+#         for attempt in range(retries):
+#             try:
+#                 return func()
+
+#             except Exception as e:
+
+#                 if not self.is_transient_error(e):
+#                     self.logger.error(f"[Cohere] Non-retryable error: {str(e)}")
+#                     raise
+
+#                 self.logger.warning(f"[Cohere] Attempt {attempt + 1} failed: {str(e)}")
+
+#                 if attempt == retries - 1:
+#                     raise
+
+#                 delay = base_delay * (2 ** attempt) + random.uniform(0, 0.5)
+#                 time.sleep(delay)
+
+#     # ----------------------------
+#     # SETTERS
+#     # ----------------------------
+#     def set_generation_model(self, model_id: str):
+#         self.generation_model_id = model_id
+
+#     def set_embedding_model(self, model_id: str, embedding_size: int):
+#         self.embedding_model_id = model_id
+#         self.embedding_size = embedding_size
+
+#     def process_text(self, text: str):
+#         return text[:self.default_input_max_characters].strip()
+
+#     # ----------------------------
+#     #  GENERATION
+#     # ----------------------------
+#     def generate_text(self, prompt: str, chat_history: list = [],
+#                       max_output_tokens: int = None, temperature: float = None):
+
+#         if not self.client:
+#             self.logger.error("CoHere client was not set")
+#             return None
+
+#         if not self.generation_model_id:
+#             self.logger.error("Generation model for CoHere was not set")
+#             return None
+
+#         max_output_tokens = max_output_tokens or self.default_generation_max_output_tokens
+#         temperature = temperature or self.default_generation_temperature
+
+#         def call_api():
+#             return self.client.chat(
+#                 model=self.generation_model_id,
+#                 chat_history=chat_history,
+#                 message=self.process_text(prompt),
+#                 temperature=temperature,
+#                 max_tokens=max_output_tokens
+#             )
+
+#         response = self.retry(call_api)
+
+#         return response.text
+
+#     # ----------------------------
+#     #  EMBEDDINGS
+#     # ----------------------------
+#     def embed_text(self, text: str, document_type: str = None):
+
+#         if not self.client:
+#             self.logger.error("CoHere client was not set")
+#             return None
+
+#         if not self.embedding_model_id:
+#             self.logger.error("Embedding model for CoHere was not set")
+#             return None
+
+#         input_type = CoHereEnums.DOCUMENT
+#         if document_type == DocumentTypeEnum.QUERY:
+#             input_type = CoHereEnums.QUERY
+
+#         def call_api():
+#             return self.client.embed(
+#                 model=self.embedding_model_id,
+#                 texts=[self.process_text(text)],
+#                 input_type=input_type,
+#                 embedding_types=['float'],
+#             )
+
+#         response = self.retry(call_api)
+
+#         return response.embeddings.float[0]
+
+#     def construct_prompt(self, prompt: str, role: str):
+#         return {
+#             "role": role,
+#             "text": self.process_text(prompt)
+#         }    
