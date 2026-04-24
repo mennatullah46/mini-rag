@@ -30,10 +30,17 @@ async def lifespan(app: FastAPI):
                                              embedding_size=settings.EMBEDDING_MODEL_SIZE)
     
     # vector db client
-    app.vectordb_client = VectorDBProviderFactory.create(
+    vector_db_factory = VectorDBProviderFactory(settings)
+
+    app.vectordb_client = vector_db_factory.create(
         provider=settings.VECTOR_DB_BACKEND
     )
     app.vectordb_client.connect()
+
+    app.template_parser = TemplateParser(
+    language=settings.PRIMARY_LANG,
+    default_language=settings.DEFAULT_LANG,
+    )
     
     yield  # application runs after this
 
@@ -41,11 +48,6 @@ async def lifespan(app: FastAPI):
     app.mongo_conn.close()
     app.vectordb_client.disconnect()
 
-    # why this happens here
-    app.template_parser = TemplateParser(
-    language=settings.PRIMARY_LANG,
-    default_language=settings.DEFAULT_LANG,
-    )
 
 
 app = FastAPI(lifespan=lifespan)
